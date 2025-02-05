@@ -9,7 +9,7 @@ STATE_PAYDAY = 1
 STATE_SALARY = 2
 STATE_FINISHED = 3
 
-user_data = {} # Хранит данные пользователя
+user_data = {} 
 
 
 @bot.message_handler(commands=['start'])
@@ -40,11 +40,11 @@ def show_powerlifting_options(message):
 
 def send_excel_file(message):
     files = {
-        "Мои деньги": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Начальный.xlsx',
-        "История": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Средний.xlsx',
-        "Календарь": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Высокий.xlsx',
-        "Ежедневной нормы расходов": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Жимовые раскладки.docx',
-        "Советы": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Жимовые раскладки.docx'
+        "Мои деньги": 
+        "История": 
+        "Календарь": 
+        "Ежедневной 
+        "Советы": 
     }
 
     file_name = files.get(message.text)
@@ -72,7 +72,7 @@ def handle_messages(message):
         elif message.text == "🔙 Назад":
             show_main_menu(message)
         elif message.text == "Опрос":
-            user_data[chat_id] = {} # Инициализация данных пользователя
+            user_data[chat_id] = {} 
             ask_profession(message)
 
 
@@ -112,11 +112,11 @@ def process_salary(message):
         salary = int(message.text)
         user_data[chat_id]['salary'] = salary
         bot.send_message(chat_id, f"Спасибо! Ваши данные:\nПрофессия: {user_data[chat_id]['profession']}\nДата зарплаты: {user_data[chat_id]['payday']}\nЗарплата: {user_data[chat_id]['salary']}")
-        show_main_menu(message) # Возвращаемся в главное меню после завершения опроса
+        show_main_menu(message) 
 
     except ValueError:
         bot.send_message(chat_id, "Пожалуйста, введите число для зарплаты.")
-        ask_salary(message) # Повторяем вопрос, если ввод некорректный
+        ask_salary(message)
 
 
 bot.polling()
