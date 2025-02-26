@@ -147,9 +147,9 @@ def save_salary_date(message):
         
         user_data[chat_id]['salary_date'] = salary_date
         
-        # Проверяем, что все данные сохранены
+        
         if 'name' in user_data[chat_id] and 'workplace' in user_data[chat_id] and 'salary' in user_data[chat_id] and 'advance_date' in user_data[chat_id] and 'salary_date' in user_data[chat_id]:
-            # Убираем кнопку "Личные данные" из меню
+            
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
             buttons = ["Расходы", "Календарь", "Профиль", "Норма расходов", "Удалить расход", "Советы"]
             markup.add(*[types.KeyboardButton(btn) for btn in buttons])
