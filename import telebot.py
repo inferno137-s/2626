@@ -51,13 +51,13 @@ def start_command(message):
 
 def show_main_menu(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    buttons = ["Опрос", "Расходы", "Календарь", "Профиль", "Норма расходов", "Удалить расход", "Советы"]
+    buttons = ["Личные данные", "Расходы", "Календарь", "Профиль", "Норма расходов", "Удалить расход", "Советы"]
     markup.add(*[types.KeyboardButton(btn) for btn in buttons])
     bot.send_message(message.chat.id, "Выберите одну из опций:", reply_markup=markup)
 
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
-    if message.text == "Опрос":
+    if message.text == "Личные данные":
         survey(message)
     elif message.text == "Расходы":
         add_expense(message)
@@ -78,6 +78,7 @@ def send_random_advice(message):
     chat_id = message.chat.id
     random_advice = random.choice(advice_list)
     bot.send_message(chat_id, f"💡 Совет дня:\n\n{random_advice}")
+
 
 def survey(message):
     bot.send_message(message.chat.id, "Введите ваше имя:")
@@ -231,7 +232,7 @@ def show_profile(message):
         
         bot.send_message(chat_id, profile_info)
     else:
-        bot.send_message(chat_id, "Сначала пройдите опрос.")
+        bot.send_message(chat_id, "Сначала ввдите свои данные в личные данные.")
 
 def show_expense_norm(message):
     chat_id = message.chat.id
@@ -260,7 +261,7 @@ def show_expense_norm(message):
         else:
             bot.send_message(chat_id, "У вас нет оставшихся средств. Пожалуйста, пересмотрите ваши расходы.")
     else:
-        bot.send_message(chat_id, "Сначала пройдите опрос.")
+        bot.send_message(chat_id, "Сначала ввдите свои данные в личные данные.")
 
 def handle_calendar(message):
     chat_id = message.chat.id
@@ -281,7 +282,7 @@ def handle_calendar(message):
             response += f"💰 До следующего аванса осталось: {days_until_advance} дней."     
         bot.send_message(chat_id, response or "Нет информации о зарплате или авансе.")
     else:
-        bot.send_message(chat_id, "Сначала пройдите опрос.")
+        bot.send_message(chat_id, "Сначала ввдите свои данные в личные данные.")
 
 def setup_notifications(chat_id):
     user_info = user_data.get(chat_id)
