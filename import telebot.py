@@ -79,7 +79,6 @@ def send_random_advice(message):
     random_advice = random.choice(advice_list)
     bot.send_message(chat_id, f"💡 Совет дня:\n\n{random_advice}")
 
-
 def survey(message):
     bot.send_message(message.chat.id, "Введите ваше имя:")
     bot.register_next_step_handler(message, save_name)
@@ -114,7 +113,7 @@ def save_salary(message):
         salary = float(message.text)
         user_data[chat_id]['salary'] = salary
         bot.send_message(chat_id, "Введите число аванса (только день, например, 15):")
-        bot.register_next_step_handler(message,save_advance_date)
+        bot.register_next_step_handler(message, save_advance_date)
     except ValueError:
         bot.send_message(chat_id, "Пожалуйста, введите корректное число.")
         save_salary(message)
@@ -147,9 +146,18 @@ def save_salary_date(message):
             salary_date = salary_date.replace(month=today.month + 1)
         
         user_data[chat_id]['salary_date'] = salary_date
-        bot.send_message(chat_id, "Ваши данные сохранены! Возвращайтесь в главное меню.")
-        setup_notifications(chat_id) 
-        show_main_menu(message)
+        
+        # Проверяем, что все данные сохранены
+        if 'name' in user_data[chat_id] and 'workplace' in user_data[chat_id] and 'salary' in user_data[chat_id] and 'advance_date' in user_data[chat_id] and 'salary_date' in user_data[chat_id]:
+            # Убираем кнопку "Личные данные" из меню
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            buttons = ["Расходы", "Календарь", "Профиль", "Норма расходов", "Удалить расход", "Советы"]
+            markup.add(*[types.KeyboardButton(btn) for btn in buttons])
+            
+            bot.send_message(chat_id, "Ваши данные сохранены! Возвращайтесь в главное меню.", reply_markup=markup)
+            setup_notifications(chat_id)
+        else:
+            bot.send_message(chat_id, "Что-то пошло не так. Попробуйте снова.")
     except ValueError:
         bot.send_message(chat_id, "Пожалуйста, введите корректное число.")
         save_salary_date(message)
@@ -232,7 +240,7 @@ def show_profile(message):
         
         bot.send_message(chat_id, profile_info)
     else:
-        bot.send_message(chat_id, "Сначала ввдите свои данные в личные данные.")
+        bot.send_message(chat_id, "Сначала введите свои данные в личные данные.")
 
 def show_expense_norm(message):
     chat_id = message.chat.id
@@ -261,7 +269,7 @@ def show_expense_norm(message):
         else:
             bot.send_message(chat_id, "У вас нет оставшихся средств. Пожалуйста, пересмотрите ваши расходы.")
     else:
-        bot.send_message(chat_id, "Сначала ввдите свои данные в личные данные.")
+        bot.send_message(chat_id, "Сначала введите свои данные в личные данные.")
 
 def handle_calendar(message):
     chat_id = message.chat.id
@@ -282,7 +290,7 @@ def handle_calendar(message):
             response += f"💰 До следующего аванса осталось: {days_until_advance} дней."     
         bot.send_message(chat_id, response or "Нет информации о зарплате или авансе.")
     else:
-        bot.send_message(chat_id, "Сначала ввдите свои данные в личные данные.")
+        bot.send_message(chat_id, "Сначала введите свои данные в личные данные.")
 
 def setup_notifications(chat_id):
     user_info = user_data.get(chat_id)
