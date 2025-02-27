@@ -1,95 +1,82 @@
 using System;
 using System.Windows.Forms;
 
-namespace CramerMethodApp
+namespace CramerMethod3x3
 {
-    public partial class MainForm : Form
+    public partial class Form1 : Form
     {
-        public MainForm()
+        public Form1()
         {
             InitializeComponent();
         }
 
-        private void btnSolve_Click(object sender, EventArgs e)
+        private void buttonSolve_Click(object sender, EventArgs e)
         {
             try
             {
                 // Получаем коэффициенты из текстовых полей
-                double a11 = double.Parse(txtA11.Text);
-                double a12 = double.Parse(txtA12.Text);
-                double a13 = double.Parse(txtA13.Text);
-                double b1 = double.Parse(txtB1.Text);
+                double a1 = double.Parse(textBoxA1.Text);
+                double b1 = double.Parse(textBoxB1.Text);
+                double c1 = double.Parse(textBoxC1.Text);
+                double d1 = double.Parse(textBoxD1.Text);
 
-                double a21 = double.Parse(txtA21.Text);
-                double a22 = double.Parse(txtA22.Text);
-                double a23 = double.Parse(txtA23.Text);
-                double b2 = double.Parse(txtB2.Text);
+                double a2 = double.Parse(textBoxA2.Text);
+                double b2 = double.Parse(textBoxB2.Text);
+                double c2 = double.Parse(textBoxC2.Text);
+                double d2 = double.Parse(textBoxD2.Text);
 
-                double a31 = double.Parse(txtA31.Text);
-                double a32 = double.Parse(txtA32.Text);
-                double a33 = double.Parse(txtA33.Text);
-                double b3 = double.Parse(txtB3.Text);
+                double a3 = double.Parse(textBoxA3.Text);
+                double b3 = double.Parse(textBoxB3.Text);
+                double c3 = double.Parse(textBoxC3.Text);
+                double d3 = double.Parse(textBoxD3.Text);
 
-                // Основная матрица
-                double[,] A = {
-                    { a11, a12, a13 },
-                    { a21, a22, a23 },
-                    { a31, a32, a33 }
-                };
+                // Вычисляем главный определитель (Delta)
+                double delta = a1 * (b2 * c3 - b3 * c2)
+                            - b1 * (a2 * c3 - a3 * c2)
+                            + c1 * (a2 * b3 - a3 * b2);
 
-                // Вектор свободных членов
-                double[] B = { b1, b2, b3 };
+                // Вычисляем определитель для x (DeltaX)
+                double deltaX = d1 * (b2 * c3 - b3 * c2)
+                               - b1 * (d2 * c3 - d3 * c2)
+                               + c1 * (d2 * b3 - d3 * b2);
 
-                // Вычисляем определитель основной матрицы
-                double detA = Determinant(A);
+                // Вычисляем определитель для y (DeltaY)
+                double deltaY = a1 * (d2 * c3 - d3 * c2)
+                               - d1 * (a2 * c3 - a3 * c2)
+                               + c1 * (a2 * d3 - a3 * d2);
 
-                if (detA == 0)
+                // Вычисляем определитель для z (DeltaZ)
+                double deltaZ = a1 * (b2 * d3 - b3 * d2)
+                               - b1 * (a2 * d3 - a3 * d2)
+                               + d1 * (a2 * b3 - a3 * b2);
+
+                // Проверяем, что система имеет решение
+                if (delta == 0)
                 {
-                    txtResult.Text = "Система не имеет единственного решения (определитель равен нулю).";
-                    return;
+                    if (deltaX == 0 && deltaY == 0 && deltaZ == 0)
+                    {
+                        textBoxResult.Text = "Система имеет бесконечное количество решений";
+                    }
+                    else
+                    {
+                        textBoxResult.Text = "Система не имеет решений";
+                    }
                 }
+                else
+                {
+                    // Находим решение системы
+                    double x = deltaX / delta;
+                    double y = deltaY / delta;
+                    double z = deltaZ / delta;
 
-                // Матрицы для вычисления определителей по методу Крамера
-                double[,] A1 = ReplaceColumn(A, B, 0);
-                double[,] A2 = ReplaceColumn(A, B, 1);
-                double[,] A3 = ReplaceColumn(A, B, 2);
-
-                // Вычисляем определители
-                double detA1 = Determinant(A1);
-                double detA2 = Determinant(A2);
-                double detA3 = Determinant(A3);
-
-                // Находим решения
-                double x1 = detA1 / detA;
-                double x2 = detA2 / detA;
-                double x3 = detA3 / detA;
-
-                // Выводим результат
-                txtResult.Text = $"x1 = {x1:F2}\r\nx2 = {x2:F2}\r\nx3 = {x3:F2}";
+                    // Выводим результат
+                    textBoxResult.Text = $"x = {x}, y = {y}, z = {z}";
+                }
             }
             catch (Exception ex)
             {
-                txtResult.Text = "Ошибка: " + ex.Message;
+                MessageBox.Show("Ошибка: " + ex.Message);
             }
-        }
-
-        // Метод для вычисления определителя матрицы 3x3
-        private double Determinant(double[,] matrix)
-        {
-            return matrix[0, 0] * (matrix[1, 1] * matrix[2, 2] - matrix[1, 2] * matrix[2, 1])
-                 - matrix[0, 1] * (matrix[1, 0] * matrix[2, 2] - matrix[1, 2] * matrix[2, 0])
-                 + matrix[0, 2] * (matrix[1, 0] * matrix[2, 1] - matrix[1, 1] * matrix[2, 0]);
-        }
-
-        // Метод для замены столбца в матрице
-        private double[,] ReplaceColumn(double[,] matrix, double[] column, int colIndex)
-        {
-            double[,] result = (double[,])matrix.Clone();
-            for (int i = 0; i < 3; i++)
-            {
-                result[i, colIndex] = column[i];
-            }
-            return result;
         }
     }
 }
